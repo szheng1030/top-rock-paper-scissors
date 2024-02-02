@@ -3,13 +3,13 @@ function getComputerChoice() {
     const rand = Math.floor(Math.random() * 3);
     switch(rand) {
         case 0:
-            return "rock";
+            return "Rock";
             break;
         case 1:
-            return "paper";
+            return "Paper";
             break;
         case 2:
-            return "scissors";
+            return "Scissors";
             break;
         default:
             console.error("getComputerChoice() switch default error");
@@ -19,22 +19,22 @@ function getComputerChoice() {
 }
 
 // compare computer and player choices, incr score if player wins
-function playRound(computerChoice, playerChoice, playerObj) {
+function playRound(computerChoice, playerChoice) {
     switch(computerChoice) {
-        case "rock":
-            playerChoice == "paper" ?  win(computerChoice, playerChoice, playerObj): 
-            playerChoice == "scissors" ? lose(computerChoice, playerChoice) : 
-            tie(computerChoice);
+        case "Rock":
+            playerChoice == "Paper" ?  processOutcome(computerChoice, playerChoice, "Win") : 
+            playerChoice == "Scissors" ? processOutcome(computerChoice, playerChoice, "Lost") : 
+            processOutcome(computerChoice, playerChoice, "Tie");
             break;
-        case "paper":
-            playerChoice == "scissors" ? win(computerChoice, playerChoice, playerObj) : 
-            playerChoice == "rock" ? lose(computerChoice, playerChoice) : 
-            tie(computerChoice);
+        case "Paper":
+            playerChoice == "Scissors" ? processOutcome(computerChoice, playerChoice, "Win") : 
+            playerChoice == "Rock" ? processOutcome(computerChoice, playerChoice, "Lost") : 
+            processOutcome(computerChoice, playerChoice, "Tie");
             break;
-        case "scissors":
-            playerChoice == "rock" ? win(computerChoice, playerChoice, playerObj) : 
-            playerChoice == "paper" ? lose(computerChoice, playerChoice) : 
-            tie(computerChoice);
+        case "Scissors":
+            playerChoice == "Rock" ? processOutcome(computerChoice, playerChoice, "Win") : 
+            playerChoice == "Paper" ? processOutcome(computerChoice, playerChoice, "Lost") : 
+            processOutcome(computerChoice, playerChoice, "Tie");
             break;
         default:
             console.error("playRound switch default error");
@@ -42,42 +42,70 @@ function playRound(computerChoice, playerChoice, playerObj) {
     }
 }
 
-// outcome handling
-function win(computerChoice, playerChoice, playerObj) {
-    console.log(`You Win! ${playerChoice} beats ${computerChoice}`);
-    playerObj.score++;
-}
-
-function lose(computerChoice, playerChoice) {
-    console.log(`You Lose! ${computerChoice} beats ${playerChoice}`);
-}
-
-function tie(choice) {
-    console.log(`It's a tie! You both chose ${choice}`);
-}
-
-// main function
-function playGame(numRounds) {
-    // use obj to pass preserve score
-    var playerObj = { score: 0 };
-
-    // loop for numRounds
-    for (let i = 0; i < numRounds; i++) {
-        let comp = getComputerChoice();
-        let player = "";
-
-        // Keep prompting until input is valid
-        while (player != "rock" && player != "paper" && player != "scissors") {
-            player = prompt("Pick: Rock, Paper, or Scissors?").toLowerCase();
+// handle the outcome of a round
+function processOutcome(computerChoice, playerChoice, outcome) {
+    // display round outcome, incr score if win
+    const resultItem = document.createElement("p");
+    if (!(outcome === "Tie")) {
+        resultItem.textContent = `You ${outcome}! ${playerChoice} beats ${computerChoice}.`;
+        if (outcome === "Win") {
+            score++;
         }
-        playRound(comp, player, playerObj);
+    } else {
+        resultItem.textContent = `It's a ${outcome}! You both chose ${playerChoice}.`;
     }
+    result.appendChild(resultItem);
 
-    // output final score
-    console.log(`Your Final Score: ${playerObj.score}`);
+    // check if 5 rounds have passed, if so, end game
+    if (++numRounds == 5) {
+        // display final score
+        const finalScore = document.createElement("p");
+        finalScore.textContent = `Your Final Score: ${score}`;
+        result.appendChild(finalScore);
+
+        // disable rps buttons
+        rock.disabled = true;
+        paper.disabled = true;
+        scissors.disabled = true;
+
+        // create retry button
+        const retry = document.createElement("button");
+        retry.textContent = `Play Again?`;
+        result.appendChild(retry);
+        retry.addEventListener("click", () => {
+            // delete all outcomes and itself
+            while (result.firstChild) {
+                result.removeChild(result.lastChild);
+            }
+
+            // reset score, round counter for fresh start
+            score = 0;
+            numRounds = 0;
+
+            // re-enable rps buttons
+            rock.disabled = false;
+            paper.disabled = false;
+            scissors.disabled = false;
+        })
+    }
 }
 
-// main
-playGame(5);
+// ----- main -----
+var score = 0, numRounds = 0;
+const rock = document.querySelector("button.rock");
+const paper = document.querySelector("button.paper");
+const scissors = document.querySelector("button.scissors");
+const result = document.querySelector(".scoreboard");
 
+rock.addEventListener('click', () => {
+    playRound(getComputerChoice(), "Rock");
+})
+
+paper.addEventListener('click', () => {
+    playRound(getComputerChoice(), "Paper");
+})
+
+scissors.addEventListener('click', () => {
+    playRound(getComputerChoice(), "Scissors");
+})
 
