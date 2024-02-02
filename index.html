@@ -5,7 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        * {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+        * {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .rock,
+        .paper,
+        .scissors {
+            margin-left: 8px;
+            margin-right: 8px;
+            padding: 4px 8px;
+        }
+
+        span {
+            margin-left: 16px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -16,6 +31,7 @@
         <button class="rock">✊</button>
         <button class="paper">🖐️</button>
         <button class="scissors">✌️</button>
+        <span>YOU: 0 - COMP: 0</span>
     </div>
     <div class="scoreboard">
     </div>

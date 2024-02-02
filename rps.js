@@ -23,17 +23,17 @@ function playRound(computerChoice, playerChoice) {
     switch(computerChoice) {
         case "Rock":
             playerChoice == "Paper" ?  processOutcome(computerChoice, playerChoice, "Win") : 
-            playerChoice == "Scissors" ? processOutcome(computerChoice, playerChoice, "Lost") : 
+            playerChoice == "Scissors" ? processOutcome(computerChoice, playerChoice, "Lose") : 
             processOutcome(computerChoice, playerChoice, "Tie");
             break;
         case "Paper":
             playerChoice == "Scissors" ? processOutcome(computerChoice, playerChoice, "Win") : 
-            playerChoice == "Rock" ? processOutcome(computerChoice, playerChoice, "Lost") : 
+            playerChoice == "Rock" ? processOutcome(computerChoice, playerChoice, "Lose") : 
             processOutcome(computerChoice, playerChoice, "Tie");
             break;
         case "Scissors":
             playerChoice == "Rock" ? processOutcome(computerChoice, playerChoice, "Win") : 
-            playerChoice == "Paper" ? processOutcome(computerChoice, playerChoice, "Lost") : 
+            playerChoice == "Paper" ? processOutcome(computerChoice, playerChoice, "Lose") : 
             processOutcome(computerChoice, playerChoice, "Tie");
             break;
         default:
@@ -46,21 +46,24 @@ function playRound(computerChoice, playerChoice) {
 function processOutcome(computerChoice, playerChoice, outcome) {
     // display round outcome, incr score if win
     const resultItem = document.createElement("p");
-    if (!(outcome === "Tie")) {
-        resultItem.textContent = `You ${outcome}! ${playerChoice} beats ${computerChoice}.`;
-        if (outcome === "Win") {
-            score++;
-        }
-    } else {
-        resultItem.textContent = `It's a ${outcome}! You both chose ${playerChoice}.`;
+    resultItem.textContent = `YOU: ${map[playerChoice]} - COMP: ${map[computerChoice]} [${outcome}]`;
+    if (outcome === "Win") {
+        playerScore++;
+    } else if (outcome === "Lose") {
+        compScore++;
     }
+    updateCurrentScore();
     result.appendChild(resultItem);
 
     // check if 5 rounds have passed, if so, end game
-    if (++numRounds == 5) {
+    if (playerScore === 5 || compScore === 5) {
         // display final score
         const finalScore = document.createElement("p");
-        finalScore.textContent = `Your Final Score: ${score}`;
+        if (playerScore === 5) {
+            finalScore.textContent = 'You got to 5 points first, Congrats!'
+        } else {
+            finalScore.textContent = 'The computer got to 5 points first, better luck next time...'
+        }
         result.appendChild(finalScore);
 
         // disable rps buttons
@@ -79,8 +82,9 @@ function processOutcome(computerChoice, playerChoice, outcome) {
             }
 
             // reset score, round counter for fresh start
-            score = 0;
-            numRounds = 0;
+            playerScore = 0;
+            compScore = 0;
+            updateCurrentScore();
 
             // re-enable rps buttons
             rock.disabled = false;
@@ -90,12 +94,18 @@ function processOutcome(computerChoice, playerChoice, outcome) {
     }
 }
 
+// live update of scores
+function updateCurrentScore() {
+    liveScore.textContent = `YOU: ${playerScore} - COMP: ${compScore}`
+}
+
 // ----- main -----
-var score = 0, numRounds = 0;
+var playerScore = 0, compScore = 0;
 const rock = document.querySelector("button.rock");
 const paper = document.querySelector("button.paper");
 const scissors = document.querySelector("button.scissors");
 const result = document.querySelector(".scoreboard");
+const liveScore = document.querySelector("span");
 
 rock.addEventListener('click', () => {
     playRound(getComputerChoice(), "Rock");
@@ -109,3 +119,9 @@ scissors.addEventListener('click', () => {
     playRound(getComputerChoice(), "Scissors");
 })
 
+// emoji mapping
+var map = {
+    "Rock" : "\u{270A}",
+    "Paper": "\u{270B}",
+    "Scissors" : "\u{270C}"
+}
